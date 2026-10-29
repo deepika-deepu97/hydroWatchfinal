@@ -2,11 +2,11 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
 import { getDb } from './server/db';
 import {
   authenticateJwt,
   requireRole,
-  requirePropertyAccess,
   generateToken,
   verifyPassword,
   AuthenticatedRequest,
@@ -23,7 +23,31 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'hydrowatch_super_secure_jwt_secret_key_2026';
 
+// Enable CORS for cross-origin requests (e.g. Vercel frontend calling standalone backend)
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  })
+);
+
 app.use(express.json());
+
+// ==========================================
+// 0. Health Check & Diagnostics Endpoint
+// ==========================================
+app.get('/api/health', (_req: Request, res: Response) => {
+  const db = getDb();
+  res.json({
+    status: 'ok',
+    service: 'HydroWatch SOA Backend',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    demoAccounts: db.users.map((u) => ({ email: u.email, role: u.role, name: u.name })),
+  });
+});
 
 // ==========================================
 // 1. Authentication Routes
@@ -39,10 +63,10 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
   }
 
   const db = getDb();
-  const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
 
   if (!user || !verifyPassword(password, user.passwordHash)) {
-    res.status(401).json({ error: 'Invalid email or password.' });
+    res.status(401).json({ error: 'Invalid email or password. Please verify credentials.' });
     return;
   }
 
@@ -238,6 +262,7 @@ app.get('/api/events/stream', (req: Request, res: Response) => {
     'Cache-Control': 'no-cache, no-transform',
     Connection: 'keep-alive',
     'X-Accel-Buffering': 'no',
+    'Access-Control-Allow-Origin': '*',
   });
 
   res.write(`event: connected\ndata: ${JSON.stringify({ message: 'Connected to HydroWatch live alert stream' })}\n\n`);
@@ -287,13 +312,22 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[HydroWatch] Full-Stack server running on port ${PORT}`);
-    console.log(`[HydroWatch] Kafka topic '${KAFKA_TOPIC_SOA_EVENTS}' initialized with consumer group 'leakcase-service-group'`);
+  // Only bind port if not running in a serverless environment (e.g. Vercel)
+  if (!process.env.VERCEL) {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[HydroWatch] Full-Stack server running on port ${PORT}`);
+      console.log(`[HydroWatch] Kafka topic '${KAFKA_TOPIC_SOA_EVENTS}' active`);
+    });
+  }
+}
+
+// Start if directly executed
+if (!process.env.VERCEL) {
+  startServer().catch((err) => {
+    console.error('Fatal server startup error:', err);
+    process.exit(1);
   });
 }
 
-startServer().catch((err) => {
-  console.error('Fatal server startup error:', err);
-  process.exit(1);
-});
+export { app };
+export default app;

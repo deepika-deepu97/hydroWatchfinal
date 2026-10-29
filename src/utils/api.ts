@@ -1,4 +1,5 @@
 import { AuthResponse, EvaluationResult, House, InvestigationCase, KafkaEvent, MicroserviceStatus, User } from '../types';
+import { buildApiUrl } from '../services/api';
 
 const TOKEN_KEY = 'hydrowatch_jwt_token';
 
@@ -32,7 +33,8 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const response = await fetch(endpoint, {
+  const targetUrl = buildApiUrl(endpoint);
+  const response = await fetch(targetUrl, {
     ...options,
     headers,
   });

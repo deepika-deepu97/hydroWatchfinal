@@ -2,6 +2,19 @@ import { AuthUser, Property, InvestigationCase, AnalystMetrics, EvaluationResult
 
 const TOKEN_KEY = 'hydrowatch_auth_token_jwt';
 
+// Publicly accessible backend API URL configured via Vercel / Vite environment variable.
+// E.g. VITE_API_BASE_URL="https://hydrowatch-backend.onrender.com"
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+
+export function buildApiUrl(endpoint: string): string {
+  // If already absolute, return as-is
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return API_BASE_URL ? `${API_BASE_URL}${cleanEndpoint}` : cleanEndpoint;
+}
+
 export function getStoredToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -25,17 +38,53 @@ function getAuthHeaders(): HeadersInit {
   return headers;
 }
 
+// 0. Backend Health Check
+export async function checkBackendHealth(): Promise<{ status: string; service: string }> {
+  const url = buildApiUrl('/api/health');
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Backend health check failed (status ${res.status})`);
+  }
+  return res.json();
+}
+
 // 1. Auth API
-export async function login(email: string, password: string): Promise<{ token: string; user: AuthUser }> {
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
+export async function login(
+  email: string,
+  password: string
+): Promise<{ token: string; user: AuthUser }> {
+  const url = buildApiUrl('/api/auth/login');
+  let res: Response;
+
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim(), password }),
+    });
+  } catch (networkErr: any) {
+    const targetUrl = API_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+    throw new Error(
+      `Unable to connect to HydroWatch backend at ${targetUrl || 'configured host'}. If frontend is deployed on Vercel, ensure VITE_API_BASE_URL is set in Vercel Project Settings to your active backend service URL.`
+    );
+  }
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ error: 'Login failed' }));
-    throw new Error(errorData.error || 'Authentication failed');
+    let errorMsg = '';
+    try {
+      const errorData = await res.json();
+      errorMsg = errorData.error;
+    } catch {
+      // Non-JSON response (e.g. 404 HTML from Vercel static routing)
+      if (res.status === 404) {
+        errorMsg = `Backend endpoint ${url} returned 404 Not Found. If frontend is deployed on Vercel, configure VITE_API_BASE_URL in your Vercel Project Settings with your publicly deployed backend URL (e.g. on Render, Railway, or Cloud Run).`;
+      } else if (res.status === 502 || res.status === 503) {
+        errorMsg = `Backend service is temporarily unavailable (HTTP ${res.status}). Verify backend deployment health.`;
+      } else {
+        errorMsg = `Backend request failed with HTTP ${res.status}: ${res.statusText || 'Unknown error'}`;
+      }
+    }
+    throw new Error(errorMsg || 'Authentication failed. Please verify credentials.');
   }
 
   const data = await res.json();
@@ -48,7 +97,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   if (!token) return null;
 
   try {
-    const res = await fetch('/api/auth/me', {
+    const url = buildApiUrl('/api/auth/me');
+    const res = await fetch(url, {
       headers: getAuthHeaders(),
     });
     if (!res.ok) {
@@ -64,7 +114,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
 // 2. Resident APIs
 export async function getResidentProperty(): Promise<Property> {
-  const res = await fetch('/api/resident/property', {
+  const url = buildApiUrl('/api/resident/property');
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
   });
   if (!res.ok) {
@@ -79,7 +130,8 @@ export async function submitResidentReading(
   flowRate: number,
   thresholdPercent?: number
 ): Promise<{ reading: any; evaluation: EvaluationResult }> {
-  const res = await fetch('/api/resident/readings', {
+  const url = buildApiUrl('/api/resident/readings');
+  const res = await fetch(url, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({ flowRate, thresholdPercent }),
@@ -95,7 +147,8 @@ export async function submitResidentReading(
 
 // 3. Utility Analyst APIs
 export async function getAnalystProperties(): Promise<Property[]> {
-  const res = await fetch('/api/analyst/properties', {
+  const url = buildApiUrl('/api/analyst/properties');
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
   });
   if (!res.ok) {
@@ -107,7 +160,8 @@ export async function getAnalystProperties(): Promise<Property[]> {
 }
 
 export async function getAnalystMetrics(): Promise<AnalystMetrics> {
-  const res = await fetch('/api/analyst/metrics', {
+  const url = buildApiUrl('/api/analyst/metrics');
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
   });
   if (!res.ok) {
@@ -119,7 +173,8 @@ export async function getAnalystMetrics(): Promise<AnalystMetrics> {
 }
 
 export async function getLeakCases(): Promise<InvestigationCase[]> {
-  const res = await fetch('/api/leak-cases', {
+  const url = buildApiUrl('/api/leak-cases');
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
   });
   if (!res.ok) {
@@ -135,7 +190,8 @@ export async function updateCaseStatus(
   status: 'Open' | 'Under Investigation' | 'Resolved',
   notes?: string
 ): Promise<InvestigationCase> {
-  const res = await fetch(`/api/leak-cases/${caseId}/status`, {
+  const url = buildApiUrl(`/api/leak-cases/${caseId}/status`);
+  const res = await fetch(url, {
     method: 'PATCH',
     headers: getAuthHeaders(),
     body: JSON.stringify({ status, notes }),
@@ -151,7 +207,8 @@ export async function updateCaseStatus(
 }
 
 export async function getKafkaEvents(): Promise<{ topic: string; messages: any[] }> {
-  const res = await fetch('/api/kafka/events', {
+  const url = buildApiUrl('/api/kafka/events');
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
   });
   if (!res.ok) {
@@ -168,7 +225,8 @@ export function subscribeToAnalystSse(
   onStatusChange: (status: 'connected' | 'connecting' | 'disconnected') => void
 ): () => void {
   onStatusChange('connecting');
-  const eventSource = new EventSource(`/api/events/stream?token=${encodeURIComponent(token)}`);
+  const sseUrl = buildApiUrl(`/api/events/stream?token=${encodeURIComponent(token)}`);
+  const eventSource = new EventSource(sseUrl);
 
   eventSource.addEventListener('open', () => {
     onStatusChange('connected');

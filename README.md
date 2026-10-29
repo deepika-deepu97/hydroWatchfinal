@@ -146,3 +146,47 @@ Services started:
 - **Case Not Appearing**:
   - Check the configured threshold. For a baseline of $10$ L/h, a reading of $17$ L/h ($+70\%$) requires a threshold below $+70\%$ (default is $+55\%$).
   - Inspect the **Kafka Event Log** by clicking the "Kafka Event Log" button on the Analyst dashboard to verify message offsets and payloads.
+
+---
+
+## 7. Vercel Deployment & Login Resolution Guide
+
+### Root Cause of "Login failed" on Vercel
+When a frontend is deployed statically on Vercel without backend integration:
+1. The frontend attempted to send authentication requests to relative paths (e.g., `/api/auth/login`) or localhost. On a pure static deployment, `/api/auth/login` returned a Vercel 404 HTML page.
+2. The frontend caught the non-JSON error and displayed a generic `"Login failed"` message with no actionable details.
+3. If an external backend was hosted elsewhere, lack of CORS headers on the backend blocked cross-origin requests.
+
+### Solution Architecture: Two Deployment Modes Supported
+
+#### Mode A: Full-Stack Vercel Serverless (Recommended — Out of the Box)
+This project now includes native Vercel Serverless Function integration:
+- `/api/index.ts` exports the Express application directly as a Vercel serverless function.
+- `vercel.json` configures URL rewrites:
+  ```json
+  {
+    "version": 2,
+    "rewrites": [
+      { "source": "/api/(.*)", "destination": "/api/index.ts" },
+      { "source": "/(.*)", "destination": "/index.html" }
+    ]
+  }
+  ```
+- `server/db.ts` includes an automatic in-memory database fallback to operate smoothly in Vercel's read-only serverless filesystem.
+- When deployed to Vercel, leave `VITE_API_BASE_URL` empty; the frontend will seamlessly call the co-located `/api/*` serverless functions.
+
+#### Mode B: Separate Backend Host (e.g., Render, Railway, AWS, Fly.io, Cloud Run)
+If you deploy your backend service on a separate server:
+1. Deploy the backend (`server.ts` or the Spring Boot microservices).
+2. Set the `VITE_API_BASE_URL` environment variable in your Vercel Project Settings:
+   - Go to **Vercel Project Dashboard** → **Settings** → **Environment Variables**.
+   - Add:
+     - **Key**: `VITE_API_BASE_URL`
+     - **Value**: `https://your-backend-api.onrender.com` (no trailing slash).
+   - Trigger a redeployment in Vercel so Vite bakes the environment variable into the production build.
+3. `server.ts` has full CORS enabled (`origin: true`, `credentials: true`), permitting cross-origin requests from any Vercel domain.
+
+### Built-in Diagnostics & Actionable Errors
+- **Health Check Endpoint**: Test backend connectivity anytime at `/api/health`.
+- **Target Backend Indicator**: The login screen displays the active backend target (`Same-origin / Vercel Serverless` or the configured `VITE_API_BASE_URL`).
+- **Helpful Error Banners**: Rather than showing an opaque `"Login failed"`, the UI displays detailed diagnostic messages (e.g., `404 Not Found: Backend route /api/auth/login is not accessible. Verify VITE_API_BASE_URL or Vercel serverless functions.` or `Network error: Could not reach backend at ...`).

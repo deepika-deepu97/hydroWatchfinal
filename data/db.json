@@ -47,6 +47,15 @@
   ],
   "readings": [
     {
+      "id": "reading-e310b8fe",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T08:46:07.764Z",
+      "flowRate": 40,
+      "evaluated": true,
+      "deviationPercentage": 300,
+      "isAnomaly": true
+    },
+    {
       "id": "reading-52f54cce",
       "propertyId": "home-a",
       "timestamp": "2026-10-29T08:17:28.823Z",
@@ -111,6 +120,59 @@
     }
   ],
   "cases": [
+    {
+      "id": "case-1793263567765-n943",
+      "caseNumber": "HW-9354",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:46:07.764Z",
+      "updatedAt": "2026-10-29T08:46:07.765Z",
+      "eventId": "evt-e2e-1793263567764",
+      "notes": "Automated detection via Kafka event evt-e2e-1793263567764 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793263567544-muvv",
+      "caseNumber": "HW-8749",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "Severe",
+      "status": "Resolved",
+      "detectedAt": "2026-10-29T08:46:07.506Z",
+      "updatedAt": "2026-10-29T08:46:07.764Z",
+      "eventId": "evt-test-1793263567506",
+      "notes": "Technician sealed flapper valve",
+      "investigatedAt": "2026-10-29T08:46:07.764Z",
+      "resolvedAt": "2026-10-29T08:46:07.764Z"
+    },
+    {
+      "id": "case-1793263567543-gxuo",
+      "caseNumber": "HW-5538",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:46:07.505Z",
+      "updatedAt": "2026-10-29T08:46:07.544Z",
+      "eventId": "evt-9444716c",
+      "notes": "Automated detection via Kafka event evt-9444716c on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
     {
       "id": "case-1793261842083-bf6u",
       "caseNumber": "HW-5668",
@@ -429,6 +491,21 @@
       "eventId": "evt-215c0a9a",
       "topic": "soa.s10.t02.events",
       "processedAt": "2026-10-29T08:17:22.083Z"
+    },
+    {
+      "eventId": "evt-9444716c",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:46:07.543Z"
+    },
+    {
+      "eventId": "evt-test-1793263567506",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:46:07.544Z"
+    },
+    {
+      "eventId": "evt-e2e-1793263567764",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:46:07.765Z"
     }
   ]
 }

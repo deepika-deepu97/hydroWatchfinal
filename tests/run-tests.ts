@@ -3,7 +3,7 @@ import { leakCaseService } from '../server/services/leakCaseService';
 import { meterSeriesService } from '../server/services/meterSeriesService';
 import { kafkaBroker, KAFKA_TOPIC_SOA_EVENTS, KafkaMessage, NightFlowAnomalyDetectedPayload } from '../server/kafka';
 import { getDb } from '../server/db';
-import { generateToken } from '../server/auth';
+import { generateToken, verifyPassword } from '../server/auth';
 import { evaluateFlow } from '../src/utils/detection';
 import jwt from 'jsonwebtoken';
 
@@ -190,26 +190,44 @@ async function runAllTests() {
     );
 
     // ----------------------------------------------------
-    // Suite 4: Security & Role Separation
+    // Suite 4: Security, Authentication & Role Separation
     // ----------------------------------------------------
-    console.log('\n[Suite 4: Security & Role Separation]');
+    console.log('\n[Suite 4: Security, Authentication & Role Separation]');
     const db = getDb();
-    const residentUser = db.users.find((u) => u.role === 'resident')!;
-    const analystUser = db.users.find((u) => u.role === 'utilityAnalyst')!;
+    const residentUser = db.users.find((u) => u.email === 'resident@hydrowatch.demo');
+    const analystUser = db.users.find((u) => u.email === 'analyst@hydrowatch.demo');
 
-    const residentToken = generateToken(residentUser);
-    const analystToken = generateToken(analystUser);
+    assert(
+      residentUser !== undefined && residentUser.role === 'resident',
+      'Test 4.1: Demo account resident@hydrowatch.demo seeded with role="resident"'
+    );
+    assert(
+      analystUser !== undefined && analystUser.role === 'utilityAnalyst',
+      'Test 4.2: Demo account analyst@hydrowatch.demo seeded with role="utilityAnalyst"'
+    );
+
+    const residentPassOk = verifyPassword('Resident@123', residentUser!.passwordHash);
+    const analystPassOk = verifyPassword('Analyst@123', analystUser!.passwordHash);
+    const wrongPassFails = !verifyPassword('WrongPass123', residentUser!.passwordHash);
+
+    assert(
+      residentPassOk && analystPassOk && wrongPassFails,
+      'Test 4.3: Bcrypt password validation succeeds for demo credentials and rejects wrong passwords'
+    );
+
+    const residentToken = generateToken(residentUser!);
+    const analystToken = generateToken(analystUser!);
 
     const decodedResident = jwt.decode(residentToken) as any;
     const decodedAnalyst = jwt.decode(analystToken) as any;
 
     assert(
       decodedResident.role === 'resident' && decodedResident.propertyId === 'home-a',
-      'Test 4.1: Resident JWT correctly encapsulates role="resident" and propertyId="home-a"'
+      'Test 4.4: Resident JWT correctly encapsulates role="resident" and propertyId="home-a"'
     );
     assert(
       decodedAnalyst.role === 'utilityAnalyst',
-      'Test 4.2: Utility Analyst JWT correctly encapsulates role="utilityAnalyst"'
+      'Test 4.5: Utility Analyst JWT correctly encapsulates role="utilityAnalyst"'
     );
 
     // ----------------------------------------------------
