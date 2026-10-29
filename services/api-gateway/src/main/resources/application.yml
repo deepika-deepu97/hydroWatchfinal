@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: meter-series-service
+          uri: lb://meter-series-service
+          predicates:
+            - Path=/api/meter-series/**, /api/resident/**
+        - id: baseline-service
+          uri: lb://baseline-service
+          predicates:
+            - Path=/api/baseline/**
+        - id: leakcase-service
+          uri: lb://leakcase-service
+          predicates:
+            - Path=/api/leak-cases/**, /api/analyst/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: hydrowatch_super_secure_jwt_secret_key_2026

@@ -1,0 +1,434 @@
+{
+  "users": [
+    {
+      "id": "user-resident-1",
+      "email": "resident@hydrowatch.demo",
+      "passwordHash": "$2b$10$yC9Em5VmVYN/30Q.Hw22JuEK0JQ2AgWxzK8LqA2VqNA17tN9c/gZi",
+      "role": "resident",
+      "name": "Sarah Jenkins (Resident)",
+      "propertyId": "home-a"
+    },
+    {
+      "id": "user-analyst-1",
+      "email": "analyst@hydrowatch.demo",
+      "passwordHash": "$2b$10$qLNkU8sFJcE.Yoi/iGbnGuWpkn0lbUEZECDMa2eeVWjniVO1FS7be",
+      "role": "utilityAnalyst",
+      "name": "Marcus Chen (Senior Utility Analyst)"
+    }
+  ],
+  "properties": [
+    {
+      "id": "home-a",
+      "name": "Home A",
+      "address": "14 Elm Creek Lane",
+      "residentEmail": "resident@hydrowatch.demo",
+      "baselineFlow": 10,
+      "thresholdPercent": 55,
+      "occupants": 2
+    },
+    {
+      "id": "home-b",
+      "name": "Home B",
+      "address": "88 Meadowbrook Way",
+      "residentEmail": "resident-b@hydrowatch.demo",
+      "baselineFlow": 30,
+      "thresholdPercent": 55,
+      "occupants": 4
+    },
+    {
+      "id": "home-c",
+      "name": "Home C",
+      "address": "42 Pinecrest Avenue, Apt 4B",
+      "residentEmail": "resident-c@hydrowatch.demo",
+      "baselineFlow": 15,
+      "thresholdPercent": 55,
+      "occupants": 3
+    }
+  ],
+  "readings": [
+    {
+      "id": "reading-52f54cce",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T08:17:28.823Z",
+      "flowRate": 8,
+      "evaluated": true,
+      "deviationPercentage": -20,
+      "isAnomaly": false
+    },
+    {
+      "id": "reading-08777683",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T08:17:22.082Z",
+      "flowRate": 40,
+      "evaluated": true,
+      "deviationPercentage": 300,
+      "isAnomaly": true
+    },
+    {
+      "id": "reading-83ee2470",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T08:17:17.018Z",
+      "flowRate": 40,
+      "evaluated": true,
+      "deviationPercentage": 300,
+      "isAnomaly": true
+    },
+    {
+      "id": "reading-b5547f4e",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T08:16:37.248Z",
+      "flowRate": 40,
+      "evaluated": true,
+      "deviationPercentage": 300,
+      "isAnomaly": true
+    },
+    {
+      "id": "reading-c77ba98e",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T07:51:05.594Z",
+      "flowRate": 22,
+      "evaluated": true,
+      "deviationPercentage": 120,
+      "isAnomaly": true
+    },
+    {
+      "id": "reading-e6d59260",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T07:42:43.153Z",
+      "flowRate": 22,
+      "evaluated": true,
+      "deviationPercentage": 120,
+      "isAnomaly": true
+    },
+    {
+      "id": "reading-init-1",
+      "propertyId": "home-a",
+      "timestamp": "2026-10-29T05:42:43.075Z",
+      "flowRate": 8,
+      "evaluated": true,
+      "deviationPercentage": -20,
+      "isAnomaly": false
+    }
+  ],
+  "cases": [
+    {
+      "id": "case-1793261842083-bf6u",
+      "caseNumber": "HW-5668",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:17:22.081Z",
+      "updatedAt": "2026-10-29T08:17:22.083Z",
+      "eventId": "evt-215c0a9a",
+      "notes": "Automated detection via Kafka event evt-215c0a9a on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793261837021-2olp",
+      "caseNumber": "HW-6524",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:17:17.018Z",
+      "updatedAt": "2026-10-29T08:17:17.021Z",
+      "eventId": "evt-e2e-1793261837018",
+      "notes": "Automated detection via Kafka event evt-e2e-1793261837018 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793261836957-h7cl",
+      "caseNumber": "HW-5441",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "Severe",
+      "status": "Resolved",
+      "detectedAt": "2026-10-29T08:17:16.953Z",
+      "updatedAt": "2026-10-29T08:17:17.018Z",
+      "eventId": "evt-test-1793261836953",
+      "notes": "Technician sealed flapper valve",
+      "investigatedAt": "2026-10-29T08:17:17.018Z",
+      "resolvedAt": "2026-10-29T08:17:17.018Z"
+    },
+    {
+      "id": "case-1793261836956-um85",
+      "caseNumber": "HW-2792",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:17:16.952Z",
+      "updatedAt": "2026-10-29T08:17:16.956Z",
+      "eventId": "evt-c09a9981",
+      "notes": "Automated detection via Kafka event evt-c09a9981 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793261797248-flx3",
+      "caseNumber": "HW-2362",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:16:37.248Z",
+      "updatedAt": "2026-10-29T08:16:37.248Z",
+      "eventId": "evt-e2e-1793261797248",
+      "notes": "Automated detection via Kafka event evt-e2e-1793261797248 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793261797187-lqui",
+      "caseNumber": "HW-8263",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "Severe",
+      "status": "Resolved",
+      "detectedAt": "2026-10-29T08:16:37.182Z",
+      "updatedAt": "2026-10-29T08:16:37.247Z",
+      "eventId": "evt-test-1793261797182",
+      "notes": "Technician sealed flapper valve",
+      "investigatedAt": "2026-10-29T08:16:37.247Z",
+      "resolvedAt": "2026-10-29T08:16:37.247Z"
+    },
+    {
+      "id": "case-1793261797187-fq3y",
+      "caseNumber": "HW-6896",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 40,
+      "baselineFlow": 10,
+      "deviationPercentage": 300,
+      "thresholdPercent": 55,
+      "severity": "High",
+      "status": "Open",
+      "detectedAt": "2026-10-29T08:16:37.181Z",
+      "updatedAt": "2026-10-29T08:16:37.187Z",
+      "eventId": "evt-54aafc08",
+      "notes": "Automated detection via Kafka event evt-54aafc08 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 40 L/h (+300%)."
+    },
+    {
+      "id": "case-1793260265594-9o6h",
+      "caseNumber": "HW-1147",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 22,
+      "baselineFlow": 10,
+      "deviationPercentage": 120,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Open",
+      "detectedAt": "2026-10-29T07:51:05.593Z",
+      "updatedAt": "2026-10-29T07:51:05.594Z",
+      "eventId": "evt-e2e-1793260265592",
+      "notes": "Automated detection via Kafka event evt-e2e-1793260265592 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 22 L/h (+120%)."
+    },
+    {
+      "id": "case-1793260265533-gyng",
+      "caseNumber": "HW-4840",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 17,
+      "baselineFlow": 10,
+      "deviationPercentage": 70,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Resolved",
+      "detectedAt": "2026-10-29T07:51:05.522Z",
+      "updatedAt": "2026-10-29T07:51:05.592Z",
+      "eventId": "evt-test-1793260265522",
+      "notes": "Technician sealed flapper valve",
+      "investigatedAt": "2026-10-29T07:51:05.591Z",
+      "resolvedAt": "2026-10-29T07:51:05.592Z"
+    },
+    {
+      "id": "case-1793260265532-eh1b",
+      "caseNumber": "HW-1862",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 17,
+      "baselineFlow": 10,
+      "deviationPercentage": 70,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Open",
+      "detectedAt": "2026-10-29T07:51:05.520Z",
+      "updatedAt": "2026-10-29T07:51:05.532Z",
+      "eventId": "evt-5e942c36",
+      "notes": "Automated detection via Kafka event evt-5e942c36 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 17 L/h (+70%)."
+    },
+    {
+      "id": "case-1793259763154-c42l",
+      "caseNumber": "HW-9854",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 22,
+      "baselineFlow": 10,
+      "deviationPercentage": 120,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Open",
+      "detectedAt": "2026-10-29T07:42:43.153Z",
+      "updatedAt": "2026-10-29T07:42:43.155Z",
+      "eventId": "evt-e2e-1793259763152",
+      "notes": "Automated detection via Kafka event evt-e2e-1793259763152 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 22 L/h (+120%)."
+    },
+    {
+      "id": "case-1793259763090-no6g",
+      "caseNumber": "HW-9318",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 17,
+      "baselineFlow": 10,
+      "deviationPercentage": 70,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Resolved",
+      "detectedAt": "2026-10-29T07:42:43.078Z",
+      "updatedAt": "2026-10-29T07:42:43.152Z",
+      "eventId": "evt-test-1793259763078",
+      "notes": "Technician sealed flapper valve",
+      "investigatedAt": "2026-10-29T07:42:43.150Z",
+      "resolvedAt": "2026-10-29T07:42:43.152Z"
+    },
+    {
+      "id": "case-1793259763089-d2au",
+      "caseNumber": "HW-7333",
+      "propertyId": "home-a",
+      "propertyName": "Home A",
+      "address": "14 Elm Creek Lane",
+      "currentFlow": 17,
+      "baselineFlow": 10,
+      "deviationPercentage": 70,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Open",
+      "detectedAt": "2026-10-29T07:42:43.076Z",
+      "updatedAt": "2026-10-29T07:42:43.089Z",
+      "eventId": "evt-ad0f6ff9",
+      "notes": "Automated detection via Kafka event evt-ad0f6ff9 on topic soa.s10.t02.events. Baseline: 10 L/h, Observed: 17 L/h (+70%)."
+    },
+    {
+      "id": "case-demo-1",
+      "caseNumber": "HW-2091",
+      "propertyId": "home-c",
+      "propertyName": "Home C",
+      "address": "42 Pinecrest Avenue, Apt 4B",
+      "currentFlow": 28.5,
+      "baselineFlow": 15,
+      "deviationPercentage": 90,
+      "thresholdPercent": 55,
+      "severity": "Moderate",
+      "status": "Under Investigation",
+      "detectedAt": "2026-10-28T13:42:43.076Z",
+      "updatedAt": "2026-10-29T03:42:43.076Z",
+      "investigatedAt": "2026-10-29T03:42:43.076Z",
+      "eventId": "evt-init-c-1",
+      "notes": "Analyst Marcus dispatched field technician to inspect main intake valve."
+    }
+  ],
+  "processedEvents": [
+    {
+      "eventId": "evt-init-c-1",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-28T13:42:43.076Z"
+    },
+    {
+      "eventId": "evt-ad0f6ff9",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:42:43.089Z"
+    },
+    {
+      "eventId": "evt-test-1793259763078",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:42:43.090Z"
+    },
+    {
+      "eventId": "evt-e2e-1793259763152",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:42:43.154Z"
+    },
+    {
+      "eventId": "evt-5e942c36",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:51:05.532Z"
+    },
+    {
+      "eventId": "evt-test-1793260265522",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:51:05.533Z"
+    },
+    {
+      "eventId": "evt-e2e-1793260265592",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T07:51:05.594Z"
+    },
+    {
+      "eventId": "evt-54aafc08",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:16:37.187Z"
+    },
+    {
+      "eventId": "evt-test-1793261797182",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:16:37.187Z"
+    },
+    {
+      "eventId": "evt-e2e-1793261797248",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:16:37.248Z"
+    },
+    {
+      "eventId": "evt-c09a9981",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:17:16.956Z"
+    },
+    {
+      "eventId": "evt-test-1793261836953",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:17:16.957Z"
+    },
+    {
+      "eventId": "evt-e2e-1793261837018",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:17:17.021Z"
+    },
+    {
+      "eventId": "evt-215c0a9a",
+      "topic": "soa.s10.t02.events",
+      "processedAt": "2026-10-29T08:17:22.083Z"
+    }
+  ]
+}
